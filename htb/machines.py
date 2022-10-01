@@ -12,21 +12,21 @@ class Machines(HackTheBox):
         self.machines = []
         self.owns = []
         self.load()
-        self.get_owns()
-        self._combine_owns()
+        #self.get_owns()
+        #self._combine_owns()
 
     def load(self) -> list:
         '''Loads complete list of machines.'''
-
         if not self.machines:
-            self.machines = self.request(endpoint='/api/machines/get/all').json()
+            self.machines = self.request(endpoint='api/machines/get/all').json()
+            # print(self.request(endpoint='api/machines/get/all').json())
+            # https://www.hackthebox.eu/api/machines/get/all
         return self.machines
 
     def get_owns(self) -> list:
         '''Find owned machines.'''
-
         if not self.owns:
-            self.owns = self.request(endpoint='/api/machines/owns').json()
+            self.owns = self.request(endpoint='api/machines/owns').json()
         return self.owns
 
     def get_by_id(self, machine_id: int) -> dict:
@@ -71,9 +71,16 @@ class Machines(HackTheBox):
         :param int machine_id: Machine ID.
         :rtype: dict
         '''
+        return self.request(endpoint='api/machines/get/{:d}/'.format(machine_id)).json()
 
-        return self.request(endpoint='/api/machines/get/{:d}/'.format(machine_id)).json()
+    def get_matrix(self, machine_id: int) -> dict:
+        '''Load full information about machine.
 
+        :param int machine_id: Machine ID.
+        :rtype: dict
+        '''
+        return self.request(endpoint='api/machines/get/matrix/{:d}/'.format(machine_id)).json()
+    
     def _filter(self, **kwargs: dict) -> list:
         '''Filter machine list.
 
@@ -103,6 +110,7 @@ class Machines(HackTheBox):
         '''
 
         owns = self.get_owns()
+
         own_ids = [_['id'] for _ in owns]
 
         notsolved = {'owned_user': False, 'owned_root': False}
@@ -122,7 +130,7 @@ class Machines(HackTheBox):
         '''
 
         message = self.request(
-            method='POST', endpoint='/api/vm/reset/{:d}'.format(machine_id)
+            method='POST', endpoint='api/vm/reset/{:d}'.format(machine_id)
         ).json()
         if not int(message['success']):
             return message['output']
@@ -146,7 +154,7 @@ class Machines(HackTheBox):
                 'Incorrect flag format ({:d} of {:d} bytes)'.format(len(flag), 32)
             )
 
-        message = self.request(method='POST', endpoint='/api/machines/own', data={
+        message = self.request(method='POST', endpoint='api/machines/own', data={
             'flag': flag,
             'difficulty': difficulty * 10,
             'id': machine_id,

@@ -44,9 +44,12 @@ class HackTheBox():
         if 'method' not in kwargs:
             kwargs['method'] = 'GET'
         if 'url' not in kwargs and kwargs['endpoint']:
-            kwargs['url'] = '{}/{}'.format(self.url, kwargs['endpoint'])
+            #kwargs['url'] = '{}/{}'.format(self.url, kwargs['endpoint'])
+            # added api key on url requests
+            kwargs['url'] = '{}/{}/?api_token={}'.format(self.url, kwargs['endpoint'], self._key)
             del kwargs['endpoint']
         try:
+            #return self.api.request(**kwargs, proxies = {'http':'http://127.0.0.1:8080', 'https':'https://127.0.0.1:8080'}, verify = False)
             return self.api.request(**kwargs)
         except Exception as e:
             print(e, file=sys.stderr)

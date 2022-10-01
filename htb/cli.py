@@ -54,11 +54,19 @@ class HackTheBoxCLI():
             dest='shout',
         )
         parser.add_argument(
+            '-t', '--table',
+            type=str,
+            metavar='NAME',
+            help='Table for machine in markdown context.',
+            dest='table',
+        )
+        parser.add_argument(
             '--aggressive',
             default=False,
             action='store_true',
             help='Monitor shoutbox for machine resets and automatically cancel them',
             dest='aggressive',
         )
+        
 
         self.namespace = parser.parse_args()
